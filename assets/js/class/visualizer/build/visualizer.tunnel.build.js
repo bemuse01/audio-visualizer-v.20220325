@@ -50,8 +50,8 @@ export default class{
 
     // tween
     createTween(objects){
-        const start = {opacity: 1, z: 0}
-        const end = {opacity: 0, z: 200}
+        const start = {opacity: 0, z: 0}
+        const end = {opacity: [1, 0, 0, 0], z: 200}
 
         const tw = new TWEEN.Tween(start)
         .to(end, 6000)
@@ -82,7 +82,7 @@ export default class{
         const objects = []
 
         this.param.forEach(param => {
-            const {radius, thickness, seg, color, opacity, needsShader} = param
+            const {radius, thickness, seg, color, needsShader} = param
 
             const materialOpt = needsShader ? {
                 vertexShader: Shader.vertex,
@@ -91,11 +91,12 @@ export default class{
                 // blending: THREE.AdditiveBlending,
                 uniforms: {
                     uColor: {value: new THREE.Color(color)},
-                    uOpacity: {value: opacity}
+                    uOpacity: {value: 0}
                 }
             } : {
                 // blending: THREE.AdditiveBlending,
                 transparent: true,
+                opacity: 0,
                 color
             }
 
