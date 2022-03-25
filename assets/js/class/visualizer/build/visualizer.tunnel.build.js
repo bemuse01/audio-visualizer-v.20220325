@@ -35,8 +35,9 @@ export default class{
             },
         ]
 
-        this.darkMaterial = new THREE.MeshBasicMaterial({color: 0xffffff})
-
+        this.darkMaterial = new THREE.MeshBasicMaterial({color: 0x000000})
+        
+        this.objects = []
         this.material = []
         this.audioIsPlaying = false
 
@@ -52,6 +53,7 @@ export default class{
     }
 
 
+    // need to fix or not
     // tween
     createTween(objects){
         const start = {opacity: 0, z: 0}
@@ -78,6 +80,8 @@ export default class{
             this.group.remove(object)
             object.dispose()
         })
+
+        this.objects.shift()
     }
 
 
@@ -88,7 +92,7 @@ export default class{
         this.param.forEach(param => {
             const {radius, thickness, seg, color, needsShader} = param
 
-            const material = needsShader ? new THREE.ShaderMaterial({
+            const materialOpt = needsShader ? {
                 vertexShader: Shader.vertex,
                 fragmentShader: Shader.fragment,
                 transparent: true,
@@ -97,18 +101,18 @@ export default class{
                     uColor: {value: new THREE.Color(color)},
                     uOpacity: {value: 0}
                 }
-            }) : new THREE.MeshBasicMaterial({
+            } : {
                 // blending: THREE.AdditiveBlending,
                 transparent: true,
                 opacity: 0,
                 color
-            })
+            }
             
             const object = new Ring({
                 innerRadius: radius,
                 outerRadius: radius + thickness,
                 seg,
-                material
+                materialOpt
             })
 
             if(needsShader){
@@ -121,6 +125,8 @@ export default class{
         })
 
         this.createTween(objects)
+
+        this.objects.push(objects)
     }
 
 
@@ -129,16 +135,25 @@ export default class{
         if(audioData) this.audioIsPlaying = true
     }
 
-
+    
+    // need to fix or not
     // swap material for avoding bloom
-    // setMaterial(){
-    //     this.group.children.forEach(mesh => {
-    //         mesh.material = this.darkMaterial
-    //     })
-    // }
-    // restoreMaterial(){
-    //     this.group.children.forEach(mesh => {
-    //         mesh.material = this.darkMaterial
-    //     })
-    // }
+    setMaterial(){
+        this.objects.forEach(child => {
+            
+            child.forEach(object => {
+                object.setMaterial(this.darkMaterial) 
+            })
+
+        })
+    }
+    restoreMaterial(){
+        this.objects.forEach(child => {
+            
+            child.forEach(object => {
+                object.setMaterial(object.getMaterial()) 
+            })
+
+        })
+    }
 }

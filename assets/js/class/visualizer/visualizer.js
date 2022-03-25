@@ -11,7 +11,7 @@ import PublicMethod from '../../method/method.js'
 
 import Center from './build/visualizer.center.build.js'
 import Child from './build/visualizer.child.build.js'
-// import Tunnel from './build/visualizer.tunnel.build.js'
+import Tunnel from './build/visualizer.tunnel.build.js'
   
 export default class{
     constructor({app, audio}){
@@ -27,7 +27,7 @@ export default class{
         }
 
         this.modules = {
-            // tunnel: Tunnel,
+            tunnel: Tunnel,
             center: Center,
             child: Child,
         }
