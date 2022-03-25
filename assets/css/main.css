@@ -1,0 +1,79 @@
+@font-face {
+    font-family: OpenSansRegular;
+    src: url('../font/OpenSans-Regular.ttf');
+}
+
+
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background: black;
+    overflow: hidden;
+    position: absolute;
+}
+div#wrap{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+}
+canvas#canvas{
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* filter: drop-shadow(0 0 10px #ffffff); */
+}
+
+
+/* visualizer */
+div.visualizer{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 100vh;
+}
+div.visualizer-object-container{
+    width: 100%;
+    height: 100%;
+}
+div.visualizer-object{
+    width: 100%;
+    height: 100%;
+}
+
+
+/* progress */
+div.progress{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 40px;
+}
+div.progress-hover{
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.25);
+    transform: scaleY(0.1);
+    transform-origin: bottom;
+    transition: transform 0.3s;
+
+}
+div.progress-bar{
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+    background: white;
+    transform: scaleY(0.1);
+    transform-origin: bottom;
+    transition: transform 0.3s;
+}
+div.progress:hover > div{
+    transform: scaleY(0.4);
+}
