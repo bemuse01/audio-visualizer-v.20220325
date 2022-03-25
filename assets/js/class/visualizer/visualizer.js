@@ -13,7 +13,7 @@ import Child from './build/visualizer.child.build.js'
 import Tunnel from './build/visualizer.tunnel.build.js'
   
 export default class{
-    constructor({app}){
+    constructor({app, audio}){
         this.param = {
             fov: 60,
             near: 0.1,
@@ -31,16 +31,19 @@ export default class{
         this.comp = {}
         this.build = new THREE.Group()
 
-        this.init(app)
+        this.renderer = app.renderer
+        this.audio = audio
+
+        this.init()
     }
 
 
     // init
-    init(app){
+    init(){
         this.initGroup()
         this.initRenderObject()
-        // this.initComposer(app)
-        this.create(app)
+        this.initComposer()
+        this.create()
         this.add()
     }
     initGroup(){
@@ -70,17 +73,17 @@ export default class{
             }
         }
     }
-    initComposer(app){
+    initComposer(){
         const {right, left, bottom, top} = this.element.getBoundingClientRect()
         const width = right - left
         const height = bottom - top
         
-        this.composer = new EffectComposer(app.renderer)
-        this.composer.setSize(width, height)
+        this.bloomComposer = new EffectComposer(this.renderer)
+        this.bloomComposer.setSize(width, height)
 
         const renderPass = new RenderPass(this.scene, this.camera)
 
-        this.composer.addPass(renderPass)
+        this.bloomComposer.addPass(renderPass)
     }
 
 
@@ -93,7 +96,7 @@ export default class{
 
 
     // create
-    create({renderer}){
+    create(){
         for(const module in this.modules){
             const instance = this.modules[module]
             const group = this.group[module]
@@ -104,22 +107,22 @@ export default class{
 
 
     // animate
-    animate({app, audio}){
-        this.render(app)
-        this.animateObject(app, audio)
+    animate(){
+        this.render()
+        this.animateObject()
     }
-    render(app){
+    render(){
         const rect = this.element.getBoundingClientRect()
         const width = rect.right - rect.left
         const height = rect.bottom - rect.top
         const left = rect.left
-        const bottom = app.renderer.domElement.clientHeight - rect.bottom
+        const bottom = this.renderer.domElement.clientHeight - rect.bottom
 
-        app.renderer.setScissor(left, bottom, width, height)
-        app.renderer.setViewport(left, bottom, width, height)
+        this.renderer.setScissor(left, bottom, width, height)
+        this.renderer.setViewport(left, bottom, width, height)
 
         this.camera.lookAt(this.scene.position)
-        app.renderer.render(this.scene, this.camera)
+        this.renderer.render(this.scene, this.camera)
 
         // app.renderer.autoClear = false
         // app.renderer.clear()
@@ -131,13 +134,12 @@ export default class{
         // this.camera.layers.set(NORMAL)
         // app.renderer.render(this.scene, this.camera)
     }
-    animateObject(app, audio){
-        const {renderer} = app
-        const {audioData, audioDataAvg} = audio
+    animateObject(){
+        const {audioData, audioDataAvg} = this.audio
 
         for(let i in this.comp){
             if(!this.comp[i] || !this.comp[i].animate) continue
-            this.comp[i].animate({renderer, audioData, audioDataAvg})
+            this.comp[i].animate({renderer: this.renderer, audioData, audioDataAvg})
         }
     }
 
@@ -151,9 +153,7 @@ export default class{
         this.camera.aspect = width / height
         this.camera.updateProjectionMatrix()
 
-        this.composer.setSize(width, height)
-
-        this.fxaa.uniforms['resolution'].value.set(1 / (width * RATIO), 1 / (height * RATIO))
+        this.bloomComposer.setSize(width, height)
 
         this.size = {
             el: {

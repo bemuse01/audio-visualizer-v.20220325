@@ -8,13 +8,13 @@ export default class{
         this.param = [
             {
                 color: 0x936cc6 - 0x111111,
-                radius: 16,
+                radius: 15,
                 thickness: 0.4,
                 seg: 128,
             },
             {
                 color: 0x936cc6 - 0x111111 + 0x333333,
-                radius: 16.7,
+                radius: 15.7,
                 thickness: 0.3,
                 seg: 128,
             }

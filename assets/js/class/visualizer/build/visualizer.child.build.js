@@ -7,10 +7,10 @@ export default class{
 
         this.param = {
             count: 3,
-            radius: 16.9,
+            radius: 15.9,
             thickness: 0.7,
             seg: 360,
-            color: 0xffffff
+            color: 0x936cc6 + 0x222222
         }
 
         this.max = this.param.seg / this.param.count
