@@ -10,7 +10,7 @@ import {TestShader} from '../../postprocess/TestShader.js'
 import PublicMethod from '../../method/method.js'
 
 import Center from './build/visualizer.center.build.js'
-// import Child from './build/visualizer.child.build.js'
+import Child from './build/visualizer.child.build.js'
 // import Tunnel from './build/visualizer.tunnel.build.js'
   
 export default class{
@@ -29,7 +29,7 @@ export default class{
         this.modules = {
             // tunnel: Tunnel,
             center: Center,
-            // child: Child,
+            child: Child,
         }
         this.group = {}
         this.comp = {}

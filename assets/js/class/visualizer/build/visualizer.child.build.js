@@ -38,12 +38,12 @@ export default class{
                 innerRadius: this.param.radius - this.param.thickness / 2,
                 outerRadius: this.param.radius + this.param.thickness / 2,
                 seg: this.param.seg,
-                material: new THREE.MeshBasicMaterial({
+                materialOpt: {
                     color: this.param.color,
                     transparent: true,
                     // opacity: 0.5,
                     // blending: THREE.AdditiveBlending
-                })
+                }
             })
 
             this.object[i].getGeometry().setDrawRange(0, 0)
