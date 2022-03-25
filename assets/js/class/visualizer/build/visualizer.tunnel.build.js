@@ -10,7 +10,7 @@ export default class{
 
         this.param = [
             {
-                radius: ParentParam.radius + 0.7,
+                radius: ParentParam.radius + 1.2,
                 thickness: 10,
                 seg: 128,
                 color: 0x936cc6 - 0x444444,
@@ -18,7 +18,7 @@ export default class{
                 needsShader: true
             },
             {
-                radius: ParentParam.radius + 0.7,
+                radius: ParentParam.radius + 1.2,
                 thickness: 1.6,
                 seg: 128,
                 color: 0x000000,
@@ -26,7 +26,7 @@ export default class{
                 needsShader: true
             },
             {
-                radius: ParentParam.radius + 0.7,
+                radius: ParentParam.radius + 1.2,
                 thickness: 0.2,
                 seg: 128,
                 color: 0x936cc6 - 0x222222,
