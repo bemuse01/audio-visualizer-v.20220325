@@ -35,6 +35,9 @@ export default class{
             },
         ]
 
+        this.darkMaterial = new THREE.MeshBasicMaterial({color: 0xffffff})
+
+        this.material = []
         this.audioIsPlaying = false
 
         this.init()
@@ -85,7 +88,7 @@ export default class{
         this.param.forEach(param => {
             const {radius, thickness, seg, color, needsShader} = param
 
-            const materialOpt = needsShader ? {
+            const material = needsShader ? new THREE.ShaderMaterial({
                 vertexShader: Shader.vertex,
                 fragmentShader: Shader.fragment,
                 transparent: true,
@@ -94,18 +97,18 @@ export default class{
                     uColor: {value: new THREE.Color(color)},
                     uOpacity: {value: 0}
                 }
-            } : {
+            }) : new THREE.MeshBasicMaterial({
                 // blending: THREE.AdditiveBlending,
                 transparent: true,
                 opacity: 0,
                 color
-            }
-
+            })
+            
             const object = new Ring({
                 innerRadius: radius,
                 outerRadius: radius + thickness,
                 seg,
-                materialOpt
+                material
             })
 
             if(needsShader){
@@ -125,4 +128,17 @@ export default class{
     animate({audioData}){
         if(audioData) this.audioIsPlaying = true
     }
+
+
+    // swap material for avoding bloom
+    // setMaterial(){
+    //     this.group.children.forEach(mesh => {
+    //         mesh.material = this.darkMaterial
+    //     })
+    // }
+    // restoreMaterial(){
+    //     this.group.children.forEach(mesh => {
+    //         mesh.material = this.darkMaterial
+    //     })
+    // }
 }

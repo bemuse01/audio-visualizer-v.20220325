@@ -38,19 +38,17 @@ export default class{
                 innerRadius: this.param.radius - this.param.thickness / 2,
                 outerRadius: this.param.radius + this.param.thickness / 2,
                 seg: this.param.seg,
-                materialOpt: {
+                material: new THREE.MeshBasicMaterial({
                     color: this.param.color,
                     transparent: true,
                     // opacity: 0.5,
                     // blending: THREE.AdditiveBlending
-                }
+                })
             })
 
             this.object[i].getGeometry().setDrawRange(0, 0)
 
             this.object[i].get().rotation.z = deg * RADIAN
-
-            this.object[i].get().layers.set(PROCESS)
 
             this.rotateGroup.add(this.object[i].get())
 

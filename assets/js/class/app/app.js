@@ -29,6 +29,8 @@ export default class{
         this.renderer.setPixelRatio(RATIO)
         this.renderer.setClearColor(0x000000, 0.0)
         this.renderer.setClearAlpha(0.0)
+        // this.renderer.toneMapping = THREE.ReinhardToneMapping
+        this.renderer.toneMappingExposure = 1
     }
 
 
@@ -37,9 +39,9 @@ export default class{
         this.render()
     }
     render(){
-        this.renderer.setScissorTest(false)
-        this.renderer.clear(true, true)
-        this.renderer.setScissorTest(true)
+        // this.renderer.setScissorTest(false)
+        // this.renderer.clear(true, true)
+        // this.renderer.setScissorTest(true)
     }
 
 

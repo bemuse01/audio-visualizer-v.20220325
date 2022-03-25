@@ -1,11 +1,11 @@
 import * as THREE from '../../lib/three.module.js'
 
 export default class{
-    constructor({innerRadius, outerRadius, seg, materialOpt}){
+    constructor({innerRadius, outerRadius, seg, material}){
         this.innerRadius = innerRadius
         this.outerRadius = outerRadius
         this.seg = seg
-        this.materialOpt = materialOpt
+        this.material = material
     
         this.init()
     }
@@ -20,19 +20,19 @@ export default class{
     // create
     create(){
         const geometry = this.createGeometry()
-        const material = this.createMaterial()
-        this.mesh = new THREE.Mesh(geometry, material)
+        // this.createMaterial()
+        this.mesh = new THREE.Mesh(geometry, this.material)
     }
     createGeometry(){
         return new THREE.RingGeometry(this.innerRadius, this.outerRadius, this.seg)
     }
-    createMaterial(){
-        if(this.materialOpt.vertexShader){
-            return new THREE.ShaderMaterial(this.materialOpt)
-        }else{
-            return new THREE.MeshBasicMaterial(this.materialOpt)
-        }
-    }
+    // createMaterial(){
+    //     if(this.materialOpt.vertexShader){
+    //         this.material = new THREE.ShaderMaterial(this.materialOpt)
+    //     }else{
+    //         this.material = new THREE.MeshBasicMaterial(this.materialOpt)
+    //     }
+    // }
 
     
     // dispose
@@ -49,6 +49,9 @@ export default class{
     setUniform(name, value){
         this.mesh.material.uniforms[name].value = value
     }
+    setMaterial(material){
+        this.mesh.material = material
+    }
 
 
     // get
@@ -59,7 +62,7 @@ export default class{
         return this.mesh.geometry
     }
     getMaterial(){
-        return this.mesh.material
+        return this.material
     }
     getAttribute(name){
         return this.mesh.geometry.attributes[name]

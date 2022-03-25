@@ -22,7 +22,6 @@ export default class{
                 thickness: 0.4,
                 seg: 128,
                 needsShader: false
-
             },
             {
                 color: 0x936cc6 - 0x111111 + 0x333333,
@@ -34,6 +33,9 @@ export default class{
             },
         ]
 
+        this.darkMaterial = new THREE.MeshBasicMaterial({color: 0x000000})
+        this.lightMaterial = new THREE.MeshBasicMaterial({color: 0xffffff})
+        this.material = []
         this.object = []
 
         this.init()
@@ -51,7 +53,7 @@ export default class{
         this.param.forEach((param, i) => {
             const {color, radius, thickness, seg, needsShader, opacity} = param
 
-            const materialOpt = needsShader ? {
+            const material = needsShader ? new THREE.ShaderMaterial({
                 vertexShader: Shader.vertex,
                 fragmentShader: Shader.fragment,
                 transparent: true,
@@ -60,17 +62,19 @@ export default class{
                     uColor: {value: new THREE.Color(color)},
                     uOpacity: {value: opacity}
                 }
-            } : {
+            }) : new THREE.MeshBasicMaterial({
                 transparent: true,
                 // blending: THREE.AdditiveBlending,
                 color
-            }
+            })
+
+            this.material.push(material) 
 
             this.object[i] = new Ring({
                 innerRadius: radius,
                 outerRadius: radius + thickness,
                 seg,
-                materialOpt
+                material
             })
 
             if(needsShader){
@@ -79,6 +83,19 @@ export default class{
             }
 
             this.group.add(this.object[i].get())
+        })
+    }
+
+
+    // swap material for avoding bloom
+    setMaterial(){
+        this.object.forEach(object => {
+            object.setMaterial(this.darkMaterial)
+        })
+    }
+    restoreMaterial(){
+        this.object.forEach((object, i) => {
+            object.setMaterial(this.material[i])
         })
     }
 }

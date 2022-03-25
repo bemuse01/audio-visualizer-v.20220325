@@ -5,12 +5,13 @@ import {RenderPass} from '../../postprocess/RenderPass.js'
 import {BloomPass} from '../../postprocess/BloomPass.js'
 import {ShaderPass} from '../../postprocess/ShaderPass.js'
 import {UnrealBloomPass} from '../../postprocess/UnrealBloomPass.js'
+import {TestShader} from '../../postprocess/TestShader.js'
 
 import PublicMethod from '../../method/method.js'
 
 import Center from './build/visualizer.center.build.js'
-import Child from './build/visualizer.child.build.js'
-import Tunnel from './build/visualizer.tunnel.build.js'
+// import Child from './build/visualizer.child.build.js'
+// import Tunnel from './build/visualizer.tunnel.build.js'
   
 export default class{
     constructor({app, audio}){
@@ -26,9 +27,9 @@ export default class{
         }
 
         this.modules = {
-            tunnel: Tunnel,
+            // tunnel: Tunnel,
             center: Center,
-            child: Child,
+            // child: Child,
         }
         this.group = {}
         this.comp = {}
@@ -47,7 +48,6 @@ export default class{
         this.initRenderObject()
         this.initComposer()
         this.create()
-        this.add()
     }
     initGroup(){
         for(const module in this.modules){
@@ -81,42 +81,40 @@ export default class{
         const width = right - left
         const height = bottom - top
 
-        this.renderTarget1 = new THREE.WebGLRenderTarget(width, height, {format: THREE.RGBAFormat})
-        this.renderTarget2 = new THREE.WebGLRenderTarget(width, height, {format: THREE.RGBAFormat})
+        const renderScene = new RenderPass( this.scene, this.camera )
+
 
         // bloom composer
-        this.bloomComposer = new EffectComposer(this.renderer, this.renderTarget2)
-        this.bloomComposer.setSize(width, height)
-
-        const renderPass = new RenderPass(this.scene, this.camera)
-
-        const unrealBoomPass = new UnrealBloomPass(new THREE.Vector2(this.size.el.w, this.size.el.h),
+        const bloomPass = new UnrealBloomPass( new THREE.Vector2( width, height ), 
             this.param.strength,
             this.param.radius,
             this.param.threshold
         )
 
-        this.bloomComposer.addPass(renderPass)
-        this.bloomComposer.addPass(unrealBoomPass)
+        this.bloomComposer = new EffectComposer(this.renderer)
+        this.bloomComposer.renderToScreen = false
+        this.bloomComposer.addPass(renderScene)
+        this.bloomComposer.addPass(bloomPass)
 
 
-        // normal composer
-        this.normalComposer = new EffectComposer(this.renderer)
-        this.normalComposer.setSize(width, height)
+        // final composer
+        const finalPass = new ShaderPass(
+            new THREE.ShaderMaterial({
+                uniforms: {
+                baseTexture: {value: null},
+                bloomTexture: {value: this.bloomComposer.renderTarget2.texture}
+                },
+                vertexShader: TestShader.vertexShader,
+                fragmentShader: TestShader.fragmentShader,
+                defines: {}
+            }), "baseTexture"
+        )
+        finalPass.needsSwap = true
 
-        const renderPass2 = new RenderPass(this.scene, this.camera)
-
-        const shaderPass = new ShaderPass()
-
-        this.normalComposer.addPass(renderPass2)
-    }
-
-
-    // add
-    add(){
-        for(let i in this.group) this.build.add(this.group[i])
-        
-        this.scene.add(this.build)
+        const renderTarget = new THREE.WebGLRenderTarget(width, height, {format: THREE.RGBAFormat, samples: 2048})
+        this.finalComposer = new EffectComposer(this.renderer, renderTarget)
+        this.finalComposer.addPass(renderScene)
+        this.finalComposer.addPass(finalPass)
     }
 
 
@@ -128,6 +126,10 @@ export default class{
 
             this.comp[module] = new instance({group, size: this.size, ...this.comp})
         }
+
+        for(let i in this.group) this.build.add(this.group[i])
+        
+        this.scene.add(this.build)
     }
 
 
@@ -137,27 +139,32 @@ export default class{
         this.animateObject()
     }
     render(){
-        const rect = this.element.getBoundingClientRect()
-        const width = rect.right - rect.left
-        const height = rect.bottom - rect.top
-        const left = rect.left
-        const bottom = this.renderer.domElement.clientHeight - rect.bottom
+        // const rect = this.element.getBoundingClientRect()
+        // const width = rect.right - rect.left
+        // const height = rect.bottom - rect.top
+        // const left = rect.left
+        // const bottom = this.renderer.domElement.clientHeight - rect.bottom
 
-        this.renderer.setScissor(left, bottom, width, height)
-        this.renderer.setViewport(left, bottom, width, height)
+        // this.renderer.setScissor(left, bottom, width, height)
+        // this.renderer.setViewport(left, bottom, width, height)
 
         // this.camera.lookAt(this.scene.position)
         // this.renderer.render(this.scene, this.camera)
 
-        this.renderer.autoClear = false
-        this.renderer.clear()
+        // this.renderer.autoClear = false
+        // this.renderer.clear()
 
-        this.camera.layers.set(PROCESS)
+        // this.camera.layers.set(PROCESS)
+        // this.bloomComposer.render()
+
+        // this.renderer.clearDepth()
+        // this.camera.layers.set(NORMAL)
+        // this.renderer.render(this.scene, this.camera)
+
+        this.setMaterial()
         this.bloomComposer.render()
-
-        this.renderer.clearDepth()
-        this.camera.layers.set(NORMAL)
-        this.renderer.render(this.scene, this.camera)
+        this.restoreMaterial()
+        this.finalComposer.render()
     }
     animateObject(){
         const {audioData, audioDataAvg} = this.audio
@@ -166,6 +173,18 @@ export default class{
             if(!this.comp[i] || !this.comp[i].animate) continue
             this.comp[i].animate({renderer: this.renderer, audioData, audioDataAvg})
         }
+    }
+    setMaterial(){
+        for(let i in this.comp){
+            if(!this.comp[i] || !this.comp[i].setMaterial) continue
+            this.comp[i].setMaterial()
+        } 
+    }
+    restoreMaterial(){
+        for(let i in this.comp){
+            if(!this.comp[i] || !this.comp[i].restoreMaterial) continue
+            this.comp[i].restoreMaterial()
+        } 
     }
 
 
