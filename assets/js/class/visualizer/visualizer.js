@@ -4,7 +4,7 @@ import {FilmPass} from '../../postprocess/FilmPass.js'
 import {RenderPass} from '../../postprocess/RenderPass.js'
 import {BloomPass} from '../../postprocess/BloomPass.js'
 import {ShaderPass} from '../../postprocess/ShaderPass.js'
-import {FXAAShader} from '../../postprocess/FXAAShader.js'
+import {UnrealBloomPass} from '../../postprocess/UnrealBloomPass.js'
 
 import PublicMethod from '../../method/method.js'
 
@@ -19,7 +19,10 @@ export default class{
             near: 0.1,
             far: 10000,
             pos: 100,
-            bloom: 2.5
+            bloom: 2.5,
+            strength: 2,
+            radius: 0,
+            threshold: 0,
         }
 
         this.modules = {
@@ -77,13 +80,35 @@ export default class{
         const {right, left, bottom, top} = this.element.getBoundingClientRect()
         const width = right - left
         const height = bottom - top
-        
-        this.bloomComposer = new EffectComposer(this.renderer)
+
+        this.renderTarget1 = new THREE.WebGLRenderTarget(width, height, {format: THREE.RGBAFormat})
+        this.renderTarget2 = new THREE.WebGLRenderTarget(width, height, {format: THREE.RGBAFormat})
+
+        // bloom composer
+        this.bloomComposer = new EffectComposer(this.renderer, this.renderTarget2)
         this.bloomComposer.setSize(width, height)
 
         const renderPass = new RenderPass(this.scene, this.camera)
 
+        const unrealBoomPass = new UnrealBloomPass(new THREE.Vector2(this.size.el.w, this.size.el.h),
+            this.param.strength,
+            this.param.radius,
+            this.param.threshold
+        )
+
         this.bloomComposer.addPass(renderPass)
+        this.bloomComposer.addPass(unrealBoomPass)
+
+
+        // normal composer
+        this.normalComposer = new EffectComposer(this.renderer)
+        this.normalComposer.setSize(width, height)
+
+        const renderPass2 = new RenderPass(this.scene, this.camera)
+
+        const shaderPass = new ShaderPass()
+
+        this.normalComposer.addPass(renderPass2)
     }
 
 
@@ -121,18 +146,18 @@ export default class{
         this.renderer.setScissor(left, bottom, width, height)
         this.renderer.setViewport(left, bottom, width, height)
 
-        this.camera.lookAt(this.scene.position)
+        // this.camera.lookAt(this.scene.position)
+        // this.renderer.render(this.scene, this.camera)
+
+        this.renderer.autoClear = false
+        this.renderer.clear()
+
+        this.camera.layers.set(PROCESS)
+        this.bloomComposer.render()
+
+        this.renderer.clearDepth()
+        this.camera.layers.set(NORMAL)
         this.renderer.render(this.scene, this.camera)
-
-        // app.renderer.autoClear = false
-        // app.renderer.clear()
-
-        // this.camera.layers.set(PROCESS)
-        // this.composer.render()
-
-        // app.renderer.clearDepth()
-        // this.camera.layers.set(NORMAL)
-        // app.renderer.render(this.scene, this.camera)
     }
     animateObject(){
         const {audioData, audioDataAvg} = this.audio

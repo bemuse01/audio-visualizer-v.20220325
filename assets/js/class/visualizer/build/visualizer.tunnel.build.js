@@ -1,6 +1,7 @@
 import * as THREE from '../../../lib/three.module.js'
 import Ring from '../../objects/ring.js'
 import Shader from '../shader/visualizer.tunnel.shader.js'
+import ParentParam from '../param/visualizer.param.js'
 
 export default class{
     constructor({group, size}){
@@ -9,7 +10,7 @@ export default class{
 
         this.param = [
             {
-                radius: 15.7,
+                radius: ParentParam.radius + 0.7,
                 thickness: 10,
                 seg: 128,
                 color: 0x936cc6 - 0x444444,
@@ -17,7 +18,7 @@ export default class{
                 needsShader: true
             },
             {
-                radius: 15.7,
+                radius: ParentParam.radius + 0.7,
                 thickness: 1.6,
                 seg: 128,
                 color: 0x000000,
@@ -25,7 +26,7 @@ export default class{
                 needsShader: true
             },
             {
-                radius: 15.7,
+                radius: ParentParam.radius + 0.7,
                 thickness: 0.2,
                 seg: 128,
                 color: 0x936cc6 - 0x222222,

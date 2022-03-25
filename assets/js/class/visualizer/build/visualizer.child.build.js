@@ -1,5 +1,6 @@
 import * as THREE from '../../../lib/three.module.js'
 import Ring from '../../objects/ring.js'
+import ParentParam from '../param/visualizer.param.js'
 
 export default class{
     constructor({group}){
@@ -7,7 +8,7 @@ export default class{
 
         this.param = {
             count: 3,
-            radius: 15.9,
+            radius: ParentParam.radius + 0.9,
             thickness: 0.7,
             seg: 360,
             color: 0x936cc6 + 0x222222
@@ -48,6 +49,8 @@ export default class{
             this.object[i].getGeometry().setDrawRange(0, 0)
 
             this.object[i].get().rotation.z = deg * RADIAN
+
+            this.object[i].get().layers.set(PROCESS)
 
             this.rotateGroup.add(this.object[i].get())
 
