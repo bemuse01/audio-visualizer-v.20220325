@@ -102,7 +102,7 @@ export default class{
                     uOpacity: {value: 0}
                 }
             } : {
-                blending: THREE.AdditiveBlending,
+                // blending: THREE.AdditiveBlending,
                 transparent: true,
                 opacity: 0,
                 color
