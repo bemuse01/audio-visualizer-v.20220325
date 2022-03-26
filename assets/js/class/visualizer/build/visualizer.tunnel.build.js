@@ -11,18 +11,18 @@ export default class{
         this.param = [
             {
                 radius: ParentParam.radius + 1.2,
-                thickness: 10,
+                thickness: 8,
                 seg: 128,
                 color: 0x936cc6 - 0x444444,
-                opacity: 0.6,
+                opacity: 0.5,
                 needsShader: true
             },
             {
                 radius: ParentParam.radius + 1.2,
-                thickness: 1.6,
+                thickness: 1.4,
                 seg: 128,
                 color: 0x000000,
-                opacity: 1,
+                opacity: 0.9,
                 needsShader: true
             },
             {

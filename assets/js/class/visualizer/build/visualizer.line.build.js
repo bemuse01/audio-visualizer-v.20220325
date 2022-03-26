@@ -13,7 +13,8 @@ export default class{
             radius: ParentParam.radius + 1.2,
             thickness: 0.3,
             seg: 360,
-            color: 0x936cc6 + 0x222222,
+            // color: 0x936cc6 + 0x222222,
+            color: 0x936cc6,
             pointSize: 6,
         }
 
