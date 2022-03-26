@@ -9,8 +9,7 @@ export default class{
         this.group = group
 
         this.param = {
-            count: 20,
-            iter: 3,
+            count: 3,
             radius: ParentParam.radius + 1.2,
             thickness: 0.3,
             seg: 360,
@@ -22,9 +21,8 @@ export default class{
         this.points = []
         this.currentData = 0
 
-        this.max = this.param.seg / this.param.iter
+        this.max = this.param.seg / this.param.count
         this.audioIsPlaying = false
-        this.index = 0
 
         this.darkMaterial = new THREE.MeshBasicMaterial({color: 0x000000})
 
@@ -34,85 +32,80 @@ export default class{
 
     // init
     init(){
-        this.create()
-
         setInterval(() => {
-            if(this.audioIsPlaying){
-                this.createTween()
-                this.index = (this.index + 1) % this.param.count
-            }
+            if(this.audioIsPlaying) this.create()
         }, 200)
     }
 
 
     // create
     create(){
-        // const points = []
+        const objects = []
+        const points = []
 
-        for(let j = 0; j < this.param.count; j++){
-            const objects = []
+        for(let i = 0; i < this.param.count; i++){
+            const {radius, thickness, seg, color} = this.param
 
-            for(let i = 0; i < this.param.iter; i++){
-                const {radius, thickness, seg, color} = this.param
+            const deg = 360 / this.param.count * i
+            
 
-                const deg = 360 / this.param.iter * i
-                
-
-                // line
-                const object = new Ring({
-                    innerRadius: radius,
-                    outerRadius: radius + thickness,
-                    seg,
-                    materialOpt: {
-                        color,
-                        transparent: true,
-                        opacity: 0,
-                        blending: THREE.AdditiveBlending
-                    }
-                })
-
-                object.getGeometry().setDrawRange(0, 0)
-                object.get().rotation.z = deg * RADIAN
-
-                this.group.add(object.get())
-                objects.push(object)
+            // line
+            const object = new Ring({
+                innerRadius: radius,
+                outerRadius: radius + thickness,
+                seg,
+                materialOpt: {
+                    color,
+                    transparent: true,
+                    opacity: 0,
+                    blending: THREE.AdditiveBlending
+                }
+            })
+            
+            object.getGeometry().setDrawRange(0, this.currentData * 3 * 2)
+            object.get().rotation.z = deg * RADIAN
+            
+            this.group.add(object.get())
+            objects.push(object)
 
 
-                // point
-                // for(let j = 0; j < 2; j++){
-                //     const point = new Particle({
-                //         count: 2,
-                //         materialOpt:{
-                //             vertexShader: Shader.vertex,
-                //             fragmentShader: Shader.fragment,
-                //             transparent: true,
-                //             uniforms: {
-                //                 uColor: {value: new THREE.Color(this.param.color)},
-                //                 uPointSize: {value: this.param.pointSize},
-                //                 uOpacity: {value: 0}
-                //             }
-                //         }
-                //     })
+            // point
+            // for(let j = 0; j < 2; j++){
+            //     const point = new Particle({
+            //         count: 2,
+            //         materialOpt:{
+            //             vertexShader: Shader.vertex,
+            //             fragmentShader: Shader.fragment,
+            //             transparent: true,
+            //             uniforms: {
+            //                 uColor: {value: new THREE.Color(this.param.color)},
+            //                 uPointSize: {value: this.param.pointSize},
+            //                 uOpacity: {value: 0}
+            //             }
+            //         }
+            //     })
 
-                //     const {position} = this.createAttribute(object)
-                //     point.setAttribute('position', new Float32Array(position), 3)
+            //     const {position} = this.createAttribute(object)
+            //     point.setAttribute('position', new Float32Array(position), 3)
 
-                //     point.get().rotation.z = deg * RADIAN
-                
-                //     this.group.add(point.get())
-                //     points.push(point)
-                // }
-            }
-
-            this.objects.push(objects)
-            // this.points.push(points)
+            //     point.get().rotation.z = deg * RADIAN
+             
+            //     this.group.add(point.get())
+            //     points.push(point)
+            // }
         }
+
+        this.createTween(objects, points)
+
+        this.objects.push(objects)
+        // this.points.push(points)
     }
     createAttribute(object){
         const position = []
 
         const array = object.getGeometry().attributes.position.array
         const half = object.getGeometry().attributes.position.count / 2
+
 
         for(let i = 0; i < 2; i++){
             const idx = this.currentData * i * 3
@@ -137,45 +130,42 @@ export default class{
 
 
     // tween
-    createTween(){
-        const objects = this.objects[this.index]
+    createTween(objects, points){
         const start = {opacity: 1, z: 0}
         const end = {opacity: 0, z: 200}
 
         const tw = new TWEEN.Tween(start)
         .to(end, 7000)
-        .onStart(() => this.onStartTween(objects))
-        .onUpdate(() => this.onUpdateTween(objects, start))
-        // .onComplete(() => this.onCompleteTween(objects))
+        .onUpdate(() => this.onUpdateTween(objects, points, start))
+        .onComplete(() => this.onCompleteTween(objects, points))
         .start()
     }
-    onStartTween(objects){
+    onUpdateTween(objects, points, {opacity, z}){
         objects.forEach((object, i) => {
-            const deg = 360 / this.param.iter * i
-
-            object.getGeometry().setDrawRange(0, this.currentData * 3 * 2)
-            object.get().rotation.z = deg * RADIAN
-        })
-    }
-    onUpdateTween(objects, {opacity, z}){
-        objects.forEach(object=> {
             object.get().position.z = z
-            object.get().rotation.z -= 0.01
 
             object.getMaterial().opacity = opacity
         })
+
+        // points.forEach(point => {
+        //     point.get().position.z = z
+        //     point.setUniform('uOpacity', opacity)
+        // })
     }
-    onCompleteTween(objects){
+    onCompleteTween(objects, points){
         objects.forEach(object => {
-            this.group.remove(object)
+            this.group.remove(object.get())
             object.dispose()
         })
-        this.objects.shift()
 
         // points.forEach(point => {
         //     this.group.remove(point)
         //     point.dispose()
         // })
+
+        objects.length = 0
+        this.objects.shift()
+        
         // this.points.shift()
     }
 
@@ -184,13 +174,13 @@ export default class{
     animate({audioData, audioDataAvg}){
         this.group.rotation.z += 0.01
 
-        // this.objects.forEach(child => {
+        this.objects.forEach(child => {
             
-        //     child.forEach((object, i) => {
-        //         object.get().rotation.z -= 0.01
-        //     })
+            child.forEach(object => {
+                object.get().rotation.z -= 0.01
+            })
 
-        // })
+        })
 
         if(audioData){
             this.audioIsPlaying = true

@@ -43,6 +43,7 @@ export default class{
     dispose(){
         this.mesh.geometry.dispose()
         this.mesh.material.dispose()
+        this.material.dispose()
     }
 
 
