@@ -77,7 +77,7 @@ export default class{
     }
     onCompleteTween(objects){
         objects.forEach(object => {
-            this.group.remove(object)
+            this.group.remove(object.get())
             object.dispose()
         })
 
