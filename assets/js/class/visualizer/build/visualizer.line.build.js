@@ -10,7 +10,7 @@ export default class{
 
         this.param = {
             count: 3,
-            radius: ParentParam.radius + 0.9,
+            radius: ParentParam.radius + 1.2,
             thickness: 0.3,
             seg: 360,
             color: 0x936cc6 + 0x222222,
@@ -56,7 +56,9 @@ export default class{
                 seg,
                 materialOpt: {
                     color,
-                    opacity: 0
+                    transparent: true,
+                    opacity: 0,
+                    blending: THREE.AdditiveBlending
                 }
             })
             
@@ -171,6 +173,14 @@ export default class{
     // animate
     animate({audioData, audioDataAvg}){
         this.group.rotation.z += 0.01
+
+        this.objects.forEach(child => {
+            
+            child.forEach(object => {
+                object.get().rotation.z -= 0.01
+            })
+
+        })
 
         if(audioData){
             this.audioIsPlaying = true
