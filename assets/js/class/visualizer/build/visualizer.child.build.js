@@ -9,7 +9,7 @@ export default class{
         this.param = {
             count: 3,
             radius: ParentParam.radius + 0.9,
-            thickness: 0.7,
+            thickness: 0.5,
             seg: 360,
             color: 0x936cc6 + 0x222222
         }
@@ -29,8 +29,6 @@ export default class{
 
     // create
     create(){
-        this.rotateGroup = new THREE.Group()
-
         for(let i = 0; i < this.param.count; i++){
             const deg = 360 / this.param.count * i
 
@@ -50,21 +48,21 @@ export default class{
 
             this.object[i].get().rotation.z = deg * RADIAN
 
-            this.rotateGroup.add(this.object[i].get())
-
-            this.group.add(this.rotateGroup)
+            this.group.add(this.object[i].get())
         }
     }
 
 
     // animate
-    animate({audioDataAvg}){
-        const data = ~~(audioDataAvg * this.max)
+    animate({audioData, audioDataAvg}){
+        this.group.rotation.z += 0.01
 
-        this.rotateGroup.rotation.z += 0.01
+        if(audioData){
+            const data = ~~(audioDataAvg * this.max)
 
-        for(let i = 0; i < this.param.count; i++){
-            this.object[i].getGeometry().setDrawRange(0, data * 2 * 3)
+            for(let i = 0; i < this.param.count; i++){
+                this.object[i].getGeometry().setDrawRange(0, data * 2 * 3)
+            }
         }
     }
 }

@@ -41,7 +41,8 @@ export default class{
 
     // dispose
     dispose(){
-        
+        this.mesh.geometry.dispose()
+        this.mesh.material.dispose()
     }
 
 
@@ -60,5 +61,8 @@ export default class{
     }
     getAttribute(name){
         return this.mesh.geometry.attributes[name]
+    }
+    getMaterial(){
+        return this.material
     }
 }
