@@ -159,19 +159,19 @@ export default class{
         })
     }
     onCompleteTween(objects, points){
-        objects.forEach(object => {
-            this.group.remove(object.get())
-            object.dispose()
-        })
-        objects.length = 0
-        this.objects.shift()
+        this.dispose('objects', objects)
+        this.dispose('points', points)
+    }
 
-        points.forEach(point => {
-            this.group.remove(point.get())
-            point.dispose()
+
+    // dispose
+    dispose(name, objs){
+        objs.forEach(obj => {
+            this.group.remove(obj.get())
+            obj.dispose()
         })
-        points.length = 0
-        this.points.shift()
+        objs.length = 0
+        this[name].shift()
     }
 
 
@@ -179,26 +179,22 @@ export default class{
     animate({audioData, audioDataAvg}){
         this.group.rotation.z += 0.01
 
-        this.objects.forEach(child => {
-            
-            child.forEach(object => {
-                object.get().rotation.z -= 0.01
-            })
-
-        })
-
-        this.points.forEach(child => {
-            
-            child.forEach(object => {
-                object.get().rotation.z -= 0.01
-            })
-
-        })
+        this.rotate('objects')
+        this.rotate('points')
 
         if(audioData){
             this.audioIsPlaying = true
             this.currentData = ~~(audioDataAvg * this.max)
         }
+    }
+    rotate(name){
+        this[name].forEach(child => {
+            
+            child.forEach(object => {
+                object.get().rotation.z -= 0.01
+            })
+
+        })
     }
 
 
