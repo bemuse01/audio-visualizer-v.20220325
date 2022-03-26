@@ -14,7 +14,7 @@ export default class{
                 thickness: 8,
                 seg: 128,
                 color: 0x936cc6 - 0x444444,
-                opacity: 0.5,
+                opacity: 0.6,
                 needsShader: true
             },
             {
@@ -102,7 +102,7 @@ export default class{
                     uOpacity: {value: 0}
                 }
             } : {
-                // blending: THREE.AdditiveBlending,
+                blending: THREE.AdditiveBlending,
                 transparent: true,
                 opacity: 0,
                 color
