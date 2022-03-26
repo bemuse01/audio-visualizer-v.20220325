@@ -11,10 +11,10 @@ export default class{
         this.param = [
             {
                 radius: ParentParam.radius + 1.2,
-                thickness: 8,
+                thickness: 10,
                 seg: 128,
                 color: 0x936cc6 - 0x444444,
-                opacity: 0.6,
+                opacity: 0.5,
                 needsShader: true
             },
             {

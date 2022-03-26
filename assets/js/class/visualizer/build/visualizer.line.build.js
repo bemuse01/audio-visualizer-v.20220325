@@ -88,7 +88,8 @@ export default class{
                         uniforms: {
                             uColor: {value: new THREE.Color(this.param.color)},
                             uPointSize: {value: this.param.pointSize},
-                            uOpacity: {value: 0}
+                            uOpacity: {value: 0},
+                            uPointScale: {value: 0}
                         }
                     }
                 })
@@ -138,8 +139,8 @@ export default class{
 
     // tween
     createTween(objects, points){
-        const start = {opacity: 1, z: 0}
-        const end = {opacity: 0, z: 200}
+        const start = {opacity: 1, z: 0, pScale: 0}
+        const end = {opacity: 0, z: 200, pScale: 2}
 
         const tw = new TWEEN.Tween(start)
         .to(end, 7000)
@@ -147,7 +148,7 @@ export default class{
         .onComplete(() => this.onCompleteTween(objects, points))
         .start()
     }
-    onUpdateTween(objects, points, {opacity, z}){
+    onUpdateTween(objects, points, {opacity, z, pScale}){
         objects.forEach((object, i) => {
             object.get().position.z = z
             object.getMaterial().opacity = opacity
@@ -156,6 +157,7 @@ export default class{
         points.forEach(point => {
             point.get().position.z = z
             point.setUniform('uOpacity', opacity)
+            point.setUniform('uPointScale', pScale)
         })
     }
     onCompleteTween(objects, points){
