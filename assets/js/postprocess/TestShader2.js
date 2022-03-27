@@ -1,8 +1,9 @@
+import ShaderMethod from '../method/method.shader.js'
+
 const TestShader2 = {
     uniforms: {
         tDiffuse: {value: null},
-        tBase: {value: null},
-        radius: {value: 0.25}
+        resolution: {value: null},
     },
 
     vertexShader: `
@@ -17,20 +18,36 @@ const TestShader2 = {
     `,
     fragmentShader: `
         uniform sampler2D tDiffuse;
-        uniform sampler2D tBase;
-        uniform float radius;
+        uniform vec2 resolution;
 
         varying vec2 vUv;
 
+        ${ShaderMethod.executeNormalizing()}
+
         void main() {
-            vec4 color1 = texture2D(tDiffuse, vUv);
-            vec4 color2 = texture2D(tBase, vUv);
+            float Pi = 6.28318530718;
+    
+            float directions = 16.0; // BLUR directions (Default 16.0 - More is better but slower)
+            float quality = 3.0; // BLUR quality (Default 4.0 - More is better but slower)
+            float size = 15.0; // BLUR size (radius)
+           
+            vec2 radius = size / resolution;
+            vec4 color = texture(tDiffuse, vUv);
+            
+            for(float d = 0.0; d < Pi; d += Pi / directions){
+                for(float i = 1.0 / quality; i <= 1.0; i += 1.0 / quality){
+                    color += texture(tDiffuse, vUv + vec2(cos(d), sin(d)) * radius * i);
+                }
+            }
+            
+            color /= quality * directions - 15.0;
 
-            float dist = distance(vUv, vec2(0.5));
+            vec4 base = texture(tDiffuse, vUv);
 
-            vec4 color = mix(color2, color1, dist);
+            float dist = executeNormalizing(distance(vUv, vec2(0.5)), 0.0, 1.0, 0.0, 0.5);
+            vec4 final = mix(base, color, dist);
 
-            gl_FragColor = color2;
+            gl_FragColor =  final;
         }
     `
 }

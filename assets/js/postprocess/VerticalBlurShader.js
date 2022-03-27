@@ -35,7 +35,6 @@ const VerticalBlurShader = {
 		varying vec2 vUv;
 
 		void main() {
-			vec4 diffuse = texture2D(tDiffuse, vUv);
 
 			vec4 sum = vec4( 0.0 );
 
@@ -49,11 +48,7 @@ const VerticalBlurShader = {
 			sum += texture2D( tDiffuse, vec2( vUv.x, vUv.y + 3.0 * v ) ) * 0.0918;
 			sum += texture2D( tDiffuse, vec2( vUv.x, vUv.y + 4.0 * v ) ) * 0.051;
 
-			float dist = distance(vUv, vec2(0.5));
-
-			vec4 color = mix(diffuse, sum, dist + 0.5);
-
-			gl_FragColor = color;
+			gl_FragColor = sum;
 
 		}`
 
