@@ -158,7 +158,7 @@ export default class{
         .start()
     }
     onUpdateTween(objects, points, {opacity, z, pScale}){
-        objects.forEach((object, i) => {
+        objects.forEach(object => {
             object.get().position.z = z
             object.getMaterial().opacity = opacity
         })
