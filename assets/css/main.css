@@ -77,3 +77,15 @@ div.progress-bar{
 div.progress:hover > div{
     transform: scaleY(0.4);
 }
+
+
+/* logo */
+div.logo{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -46%);
+    width: 16vh;
+    height: 16vh;
+    background: url('../src/holox.png') no-repeat center center / cover;
+}
