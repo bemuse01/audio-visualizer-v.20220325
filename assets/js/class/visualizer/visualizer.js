@@ -214,6 +214,7 @@ export default class{
         this.camera.updateProjectionMatrix()
 
         this.bloomComposer.setSize(width, height)
+        this.finalComposer.setSize(width, height)
 
         this.size = {
             el: {
