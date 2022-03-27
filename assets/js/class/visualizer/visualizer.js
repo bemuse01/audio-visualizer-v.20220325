@@ -115,22 +115,14 @@ export default class{
         )
         finalPass.needsSwap = true
 
-        const vBlur = new ShaderPass(VerticalBlurShader)
-        vBlur.uniforms['v'].value = 1 / height
-        
-        // const hBlur = new ShaderPass(HorizontalBlurShader)
-        // hBlur.uniforms['h'].value = 1 / width
-
-        const finalPass2 = new ShaderPass(TestShader2)
-        finalPass2.uniforms['resolution'].value = new THREE.Vector2(width, height)
+        this.finalPass2 = new ShaderPass(TestShader2)
+        this.finalPass2.uniforms['resolution'].value = new THREE.Vector2(width, height)
 
         const renderTarget = new THREE.WebGLRenderTarget(width, height, {format: THREE.RGBAFormat, samples: 2048})
         this.finalComposer = new EffectComposer(this.renderer, renderTarget)
         this.finalComposer.addPass(renderScene)
         this.finalComposer.addPass(finalPass)
-        // this.finalComposer.addPass(vBlur)
-        // this.finalComposer.addPass(hBlur)
-        this.finalComposer.addPass(finalPass2)
+        this.finalComposer.addPass(this.finalPass2)
     }
 
 
@@ -215,6 +207,7 @@ export default class{
 
         this.bloomComposer.setSize(width, height)
         this.finalComposer.setSize(width, height)
+        this.finalPass2.uniforms['resolution'].value = new THREE.Vector2(width, height)
 
         this.size = {
             el: {
