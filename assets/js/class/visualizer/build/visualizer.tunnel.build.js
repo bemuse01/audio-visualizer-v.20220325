@@ -41,15 +41,18 @@ export default class{
         this.material = []
         this.audioIsPlaying = false
 
+        this.oldTime = window.performance.now()
+        this.interval = 800
+
         this.init()
     }
 
 
     // init
     init(){
-        setInterval(() => {
-            if(this.audioIsPlaying) this.create()
-        }, 800)
+        // setInterval(() => {
+        //     if(this.audioIsPlaying) this.create()
+        // }, 800)
     }
 
 
@@ -133,11 +136,23 @@ export default class{
     // animate
     animate({audioData}){
         if(audioData) this.audioIsPlaying = true
+
+        this.generate()
+    }
+    generate(){
+        if(!this.audioIsPlaying) return
+
+        const time = window.performance.now()
+
+        if(time - this.oldTime > this.interval){
+            this.create()
+            this.oldTime = time
+        }
     }
 
     
     // need to fix or not
-    // swap material for avoding bloom
+    // swap material to avoid bloom
     setMaterial(){
         this.objects.forEach(child => {
             

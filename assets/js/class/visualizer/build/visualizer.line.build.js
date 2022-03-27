@@ -23,7 +23,13 @@ export default class{
         this.currentData = 0
 
         this.max = this.param.seg / this.param.count
+        this.limit = this.max * 0.5
         this.audioIsPlaying = false
+        this.id = 0
+        this.step = 5
+
+        this.oldTime = window.performance.now()
+        this.interval = 200
 
         this.darkMaterial = new THREE.MeshBasicMaterial({color: 0x000000})
 
@@ -33,9 +39,11 @@ export default class{
 
     // init
     init(){
-        setInterval(() => {
-            if(this.audioIsPlaying) this.create()
-        }, 200)
+        // setInterval(() => {
+        //     if(this.audioIsPlaying){
+        //         this.create()
+        //     }
+        // }, 200)
     }
 
 
@@ -106,8 +114,9 @@ export default class{
 
         this.createTween(objects, points)
 
-        this.objects.push(objects)
-        this.points.push(points)
+        this.objects.push({arr: objects, id: this.id})
+        this.points.push({arr: points, id: this.id})
+        this.id = (this.id + 1) % this.step
     }
     createAttribute(object, currentData){
         const position = []
@@ -179,6 +188,8 @@ export default class{
 
     // animate
     animate({audioData, audioDataAvg}){
+        this.generate()
+
         this.group.rotation.z += 0.01
 
         this.rotate('objects')
@@ -190,30 +201,41 @@ export default class{
         }
     }
     rotate(name){
-        this[name].forEach(child => {
-            
-            child.forEach(object => {
+        this[name].forEach(({arr}) => {
+            arr.forEach(object => {
                 object.get().rotation.z -= 0.01
             })
-
         })
+    }
+    generate(){
+        if(!this.audioIsPlaying) return
+
+        const time = window.performance.now()
+
+        if(time - this.oldTime > this.interval){
+            this.create()
+            this.oldTime = time
+        }
     }
 
 
-    // swap material for avoding bloom
+    // swap material to avoid bloom
     setMaterial(){
-        this.objects.forEach(child => {
-            
-            child.forEach(object => {
-                object.setMaterial(this.darkMaterial) 
-            })
+        for(let i = 0; i < this.objects.length; i++){
+            const id = this.objects[i].id 
 
-        })
+            if(this.currentData > this.limit && id % this.step === 0) continue
+
+            const child = this.objects[i].arr
+
+            child.forEach(object => {
+                object.setMaterial(this.darkMaterial)
+            })
+        }
     }
     restoreMaterial(){
-        this.objects.forEach(child => {
-            
-            child.forEach(object => {
+        this.objects.forEach(({arr}) => {
+            arr.forEach(object => {
                 object.setMaterial(object.getMaterial()) 
             })
 

@@ -84,7 +84,7 @@ export default class{
     }
 
 
-    // swap material for avoding bloom
+    // swap material to avoding bloom
     setMaterial(){
         this.object.forEach(object => {
             object.setMaterial(this.darkMaterial) 
