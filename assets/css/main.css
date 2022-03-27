@@ -59,7 +59,7 @@ div.progress-hover{
     position: absolute;
     bottom: 0;
     height: 100%;
-    background: rgba(255, 255, 255, 0.25);
+    background: #936cc633;
     transform: scaleY(0.1);
     transform-origin: bottom;
     transition: transform 0.3s;
@@ -69,7 +69,7 @@ div.progress-bar{
     position: absolute;
     bottom: 0;
     height: 100%;
-    background: white;
+    background: #936cc6;
     transform: scaleY(0.1);
     transform-origin: bottom;
     transition: transform 0.3s;
