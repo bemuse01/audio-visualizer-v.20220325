@@ -6,7 +6,9 @@ import {BloomPass} from '../../postprocess/BloomPass.js'
 import {ShaderPass} from '../../postprocess/ShaderPass.js'
 import {UnrealBloomPass} from '../../postprocess/UnrealBloomPass.js'
 import {TestShader} from '../../postprocess/TestShader.js'
-
+import {TestShader2} from '../../postprocess/TestShader2.js'
+import {HorizontalBlurShader} from '../../postprocess/HorizontalBlurShader.js'
+import {VerticalBlurShader} from '../../postprocess/VerticalBlurShader.js'
 import PublicMethod from '../../method/method.js'
 
 import Center from './build/visualizer.center.build.js'
@@ -103,8 +105,8 @@ export default class{
         const finalPass = new ShaderPass(
             new THREE.ShaderMaterial({
                 uniforms: {
-                baseTexture: {value: null},
-                bloomTexture: {value: this.bloomComposer.renderTarget2.texture}
+                    baseTexture: {value: null},
+                    bloomTexture: {value: this.bloomComposer.renderTarget2.texture}
                 },
                 vertexShader: TestShader.vertexShader,
                 fragmentShader: TestShader.fragmentShader,
@@ -113,10 +115,22 @@ export default class{
         )
         finalPass.needsSwap = true
 
+        // const vBlur = new ShaderPass(VerticalBlurShader)
+        // vBlur.uniforms['v'].value = 1 / height
+        
+        // const hBlur = new ShaderPass(HorizontalBlurShader)
+        // hBlur.uniforms['h'].value = 1 / width
+
+        // const finalPass2 = new ShaderPass(TestShader2)
+        // finalPass2.uniforms['tBase'].value = this.bloomComposer.renderTarget2.texture
+
         const renderTarget = new THREE.WebGLRenderTarget(width, height, {format: THREE.RGBAFormat, samples: 2048})
         this.finalComposer = new EffectComposer(this.renderer, renderTarget)
         this.finalComposer.addPass(renderScene)
         this.finalComposer.addPass(finalPass)
+        // this.finalComposer.addPass(vBlur)
+        // this.finalComposer.addPass(hBlur)
+        // this.finalComposer.addPass(finalPass2)
     }
 
 
