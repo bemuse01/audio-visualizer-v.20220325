@@ -44,8 +44,8 @@ const TestShader2 = {
 
             vec4 base = texture(tDiffuse, vUv);
 
-            // float dist = executeNormalizing(distance(vUv, vec2(0.5)), 0.0, 1.0, 0.0, 0.5);
-            float dist = distance(vUv * 2.0 - 1.0, vec2(0));
+            float dist = executeNormalizing(distance(vUv, vec2(0.5)), 0.0, 1.0, 0.0, 0.5);
+            // float dist = distance(vUv * 2.0 - 1.0, vec2(0));
             vec4 final = mix(base, color, dist);
 
             gl_FragColor =  final;
