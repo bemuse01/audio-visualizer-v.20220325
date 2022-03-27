@@ -28,8 +28,8 @@ const TestShader2 = {
             float Pi = 6.28318530718;
     
             float directions = 16.0; // BLUR directions (Default 16.0 - More is better but slower)
-            float quality = 3.0; // BLUR quality (Default 4.0 - More is better but slower)
-            float size = 15.0; // BLUR size (radius)
+            float quality = 4.0; // BLUR quality (Default 4.0 - More is better but slower)
+            float size = 16.0; // BLUR size (radius)
            
             vec2 radius = size / resolution;
             vec4 color = texture(tDiffuse, vUv);

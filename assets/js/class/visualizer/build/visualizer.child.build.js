@@ -9,7 +9,7 @@ export default class{
         this.param = {
             count: 3,
             radius: ParentParam.radius + 0.9,
-            thickness: 0.5,
+            thickness: 0.3,
             seg: 360,
             color: 0x936cc6 + 0x222222
         }
