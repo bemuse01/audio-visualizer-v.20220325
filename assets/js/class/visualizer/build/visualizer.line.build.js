@@ -29,7 +29,7 @@ export default class{
         this.step = 5
 
         this.oldTime = window.performance.now()
-        this.interval = 200
+        this.interval = 150
 
         this.darkMaterial = new THREE.MeshBasicMaterial({color: 0x000000})
 

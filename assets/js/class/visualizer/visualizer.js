@@ -117,8 +117,8 @@ export default class{
         )
         finalPass.needsSwap = true
 
-        this.finalPass2 = new ShaderPass(TestShader2)
-        this.finalPass2.uniforms['resolution'].value = new THREE.Vector2(width, height)
+        // this.finalPass2 = new ShaderPass(TestShader2)
+        // this.finalPass2.uniforms['resolution'].value = new THREE.Vector2(width, height)
 
         const renderTarget = new THREE.WebGLRenderTarget(width, height, {format: THREE.RGBAFormat, samples: 2048})
         this.finalComposer = new EffectComposer(this.renderer, renderTarget)
