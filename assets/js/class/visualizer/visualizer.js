@@ -15,6 +15,7 @@ import Center from './build/visualizer.center.build.js'
 import Child from './build/visualizer.child.build.js'
 import Tunnel from './build/visualizer.tunnel.build.js'
 import Line from './build/visualizer.line.build.js'
+import Logo from './build/visualizer.logo.build.js'
   
 export default class{
     constructor({app, audio}){
@@ -34,6 +35,7 @@ export default class{
             line: Line,
             center: Center,
             child: Child,
+            logo: Logo
         }
         this.group = {}
         this.comp = {}
@@ -122,7 +124,7 @@ export default class{
         this.finalComposer = new EffectComposer(this.renderer, renderTarget)
         this.finalComposer.addPass(renderScene)
         this.finalComposer.addPass(finalPass)
-        this.finalComposer.addPass(this.finalPass2)
+        // this.finalComposer.addPass(this.finalPass2)
     }
 
 
@@ -145,6 +147,7 @@ export default class{
     animate(){
         this.render()
         this.animateObject()
+        this.animateGroup()
     }
     render(){
         // const rect = this.element.getBoundingClientRect()
@@ -173,6 +176,15 @@ export default class{
         this.bloomComposer.render()
         this.restoreMaterial()
         this.finalComposer.render()
+    }
+    animateGroup(){
+        const time = window.performance.now()
+
+        const x = SIMPLEX.noise3D(0.005, 0.02, time * 0.0002581)
+        const y = SIMPLEX.noise3D(0.015, 0.01, time * 0.0002123)
+
+        this.build.position.x = x * 9
+        this.build.position.y = y * 9
     }
     animateObject(){
         const {audioData, audioDataAvg} = this.audio

@@ -1,11 +1,12 @@
 import * as THREE from '../../lib/three.module.js'
 
 export default class{
-    constructor({width, height, widthSeg, heightSeg, materialOpt}){
+    constructor({width, height, widthSeg, heightSeg, materialName, materialOpt}){
         this.width = width
         this.height = height
         this.widthSeg = widthSeg
         this.heightSeg = heightSeg
+        this.materialName = materialName
         this.materialOpt = materialOpt
     
         this.init()
@@ -21,18 +22,14 @@ export default class{
     // create
     create(){
         const geometry = this.createGeometry()
-        const material = this.createMaterial()
-        this.mesh = new THREE.Mesh(geometry, material)
+        this.createMaterial()
+        this.mesh = new THREE.Mesh(geometry, this.material)
     }
     createGeometry(){
         return new THREE.PlaneGeometry(this.width, this.height, this.widthSeg, this.heightSeg)
     }
     createMaterial(){
-        if(this.materialOpt.vertexShader){
-            return new THREE.ShaderMaterial(this.materialOpt)
-        }else{
-            return new THREE.MeshBasicMaterial(this.materialOpt)
-        }
+        this.material = new THREE[this.materialName](this.materialOpt)
     }
 
 
@@ -43,7 +40,9 @@ export default class{
     setUniform(name, value){
         this.mesh.material.uniforms[name].value = value
     }
-
+    setMaterial(material){
+        this.mesh.material = material
+    }
 
     // get
     get(){
@@ -53,7 +52,7 @@ export default class{
         return this.mesh.geometry
     }
     getMaterial(){
-        return this.mesh.material
+        return this.material
     }
     getAttribute(name){
         return this.mesh.geometry.attributes[name]
